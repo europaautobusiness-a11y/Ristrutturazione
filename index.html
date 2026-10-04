@@ -1,0 +1,356 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Pagamenti lavori – Trilocale Unità C</title>
+<meta name="theme-color" content="#1F2A2E">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Lavori C">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="icon" href="icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Semi+Condensed:wght@500;600;700&family=Public+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style id="css">
+:root{
+  --bg:#ECEEEA;--panel:#F8F9F6;--ink:#1F2A2E;--muted:#5D6A6E;--line:#C9CEC6;
+  --paid:#2F7A4A;--due:#B7791F;--blue:#2C5F86;--danger:#A33A2A;
+  box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#161C1E;--panel:#1F2729;--ink:#E6EAE6;--muted:#9AA6A8;--line:#344044;
+  --paid:#5DBA80;--due:#E0A84A;--blue:#7FB2DA;--danger:#E07B6A;}}
+:root[data-theme="dark"]{--bg:#161C1E;--panel:#1F2729;--ink:#E6EAE6;--muted:#9AA6A8;--line:#344044;--paid:#5DBA80;--due:#E0A84A;--blue:#7FB2DA;--danger:#E07B6A;}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*,*::before,*::after{box-sizing:inherit}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 15px/1.5 "Public Sans",system-ui,-apple-system,"Segoe UI",sans-serif}
+main{max-width:680px;margin:0 auto;padding:20px 16px 48px}
+h1,h2,.num{font-family:"Barlow Semi Condensed","Arial Narrow",system-ui,sans-serif}
+h1{font-size:1.15rem;font-weight:600;margin:0;color:var(--muted)}
+h2{font-size:1.25rem;font-weight:600;margin:32px 0 10px}
+.hero{padding:8px 0 4px}
+.big{font-size:3.2rem;font-weight:700;line-height:1;margin:10px 0 2px}
+.sub{color:var(--muted);font-size:.9rem}
+.tape{position:relative;height:34px;margin:22px 0 30px;background:repeating-linear-gradient(90deg,var(--line) 0 1px,transparent 1px 10%) ,var(--panel);border:1px solid var(--line);border-radius:4px}
+.fill{position:absolute;inset:0 auto 0 0;background:var(--paid);border-radius:3px 0 0 3px;transition:width .6s ease}
+.tick{position:absolute;top:-6px;bottom:-6px;width:2px;background:var(--ink)}
+.tick span{position:absolute;top:calc(100% + 2px);left:50%;transform:translateX(-50%);font-size:.72rem;color:var(--muted);white-space:nowrap}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--line);border:1px solid var(--line);border-radius:6px;overflow:hidden}
+.stats div{background:var(--panel);padding:10px 12px}
+.stats b{display:block;font-family:"Barlow Semi Condensed","Arial Narrow",sans-serif;font-size:1.3rem;font-weight:600}
+.stats small{color:var(--muted);font-size:.78rem}
+.ivarow{display:flex;gap:8px;align-items:center;margin-top:14px;flex-wrap:wrap;font-size:.88rem;color:var(--muted)}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:6px;overflow:hidden}
+.seg button{border:0;background:var(--panel);color:var(--ink);padding:6px 12px;font:inherit;cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--blue);color:#fff}
+table{width:100%;border-collapse:collapse;font-size:.9rem}
+.wrap{overflow-x:auto}
+th,td{text-align:left;padding:8px 6px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-weight:600;color:var(--muted);font-size:.8rem}
+td.r,th.r{text-align:right;white-space:nowrap}
+.st{font-size:.78rem;font-weight:600;padding:2px 7px;border-radius:10px;white-space:nowrap}
+.st.ok{color:var(--paid);border:1px solid var(--paid)}
+.st.part{color:var(--due);border:1px solid var(--due)}
+.st.no{color:var(--muted);border:1px solid var(--line)}
+form{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:14px;display:grid;grid-template-columns:1fr 1fr;gap:10px}
+form .full{grid-column:1/-1}
+label{display:flex;flex-direction:column;font-size:.8rem;color:var(--muted);gap:4px}
+input,select{font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:5px;padding:9px 10px;min-width:0;width:100%}
+input:focus-visible,select:focus-visible,button:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
+.btn{grid-column:1/-1;background:var(--ink);color:var(--bg);border:0;border-radius:5px;padding:11px;font:600 .95rem "Public Sans",sans-serif;cursor:pointer}
+.btn:disabled{opacity:.5}
+.hint{grid-column:1/-1;font-size:.8rem;color:var(--due);margin:0}
+.del{background:none;border:0;color:var(--danger);cursor:pointer;font-size:.8rem;padding:2px 4px}
+.empty{color:var(--muted);font-size:.9rem;padding:12px 0}
+.note{font-size:.8rem;color:var(--muted)}
+.banner{font-size:.82rem;background:var(--panel);border-left:3px solid var(--due);padding:8px 10px;margin-top:12px}
+@media (max-width:420px){.big{font-size:2.6rem}.stats b{font-size:1.1rem}form{grid-template-columns:1fr}}
+@media (prefers-reduced-motion:reduce){.fill{transition:none}}
+.sec{background:var(--panel);border:1px solid var(--line);border-radius:6px;margin-bottom:8px}
+.sec summary{list-style:none;cursor:pointer;padding:12px 14px;display:grid;grid-template-columns:1fr auto;gap:2px 10px;align-items:center}
+.sec summary::-webkit-details-marker{display:none}
+.sec summary .t{font-weight:600}
+.sec summary .m{grid-column:1/-1;font-size:.8rem;color:var(--muted)}
+.bar{grid-column:1/-1;height:5px;background:var(--bg);border-radius:3px;overflow:hidden;margin-top:6px}
+.bar i{display:block;height:100%;background:var(--paid)}
+.sec[open] summary{border-bottom:1px solid var(--line)}
+.voce{padding:10px 14px;border-bottom:1px dashed var(--line)}
+.voce:last-child{border-bottom:0}
+.vh{display:flex;justify-content:space-between;gap:10px;align-items:baseline}
+.vh span:first-child{font-size:.92rem}
+.vm{font-size:.8rem;color:var(--muted);margin-top:2px}
+.pl{margin:6px 0 0;padding:0;list-style:none;font-size:.8rem}
+.pl li{display:flex;justify-content:space-between;gap:8px;padding:3px 0 3px 10px;border-left:2px solid var(--line)}
+.quick{background:none;border:1px solid var(--blue);color:var(--blue);border-radius:5px;padding:4px 10px;font:500 .8rem "Public Sans",sans-serif;cursor:pointer;margin-top:6px}
+.resinfo{grid-column:1/-1;font-size:.82rem;color:var(--muted);display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:-2px 0 0}
+.resinfo button{margin:0}
+.secTot{font-size:1.15rem;font-weight:600;white-space:nowrap}
+.sec summary .m .st{margin-right:6px}
+.sync{margin-top:12px;font-size:.82rem;color:var(--muted)}
+.sync[data-s="ok"]{color:var(--paid)}
+.sync[data-s="err"],.sync[data-s="off"]{color:var(--due)}
+.bk{display:flex;gap:10px;flex-wrap:wrap}
+.st.over{color:var(--danger);border:1px solid var(--danger)}
+</style>
+</head>
+<body>
+<main id="root"></main>
+<script type="application/json" id="state">{"iva":0,"payments":[],"extras":[]}</script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<script id="app">
+(function(){
+/* ===== CONFIGURAZIONE SUPABASE: incolla qui i tuoi valori (Project Settings > API) ===== */
+var SUPABASE_URL="INSERISCI_PROJECT_URL";
+var SUPABASE_KEY="INSERISCI_ANON_PUBLIC_KEY";
+/* ======================================================================================= */
+var VOCI=[
+["Demolizioni",[["1","Demolizioni (pavimenti balconi, pareti, finestra, nuova porta)",1500]]],
+["Tracce",[["2","N. 30 tracce con ripristino in malta fibrorinforzata",1800]]],
+["Cartongesso",[["3","Disimpegno doppia lastra, 42 mq",1806]]],
+["Bagno",[["4","Assistenza idraulico, massetto, piatto doccia, stabilitura",1000]]],
+["Putrella",[["5a","Fornitura putrella",500],["5b","Posa putrella con malta antiritiro",400]]],
+["Blindata e porte",[["6a","Fornitura porta cantina in acciaio",150],["6b","Posa porta cantina",80],["6c","Posa 4 porte interne",280],["6d","Fornitura 4 porte interne",400]]],
+["Finitura muri e soffitti",[["7","Picozzatura, aggrappante, pronto e gesso (circa 100 mq)",2200]]],
+["Imbiancatura",[["8a","Idropittura lavabile, 124 mq",1000],["8b","Pittura al quarzo, 57 mq",456]]],
+["Zoccolini",[["9a","Posa zoccolini",300],["9b","Fornitura zoccolini, 50 ml",500]]],
+["Muro divisorio",[["10","Muro in porizzato verso appartamento Mirko",500]]],
+["Serramenti (fornitura)",[["11a","Portoncino d'ingresso",1100],["11b","Finestra bagno",200],["11c","Finestra zona giorno",400],["11d","Finestra camera",400],["11e","Portafinestra",700],["11f","Quota 1/3 portoncino comune",400]]],
+["Trasporto e magazzino infissi",[["12","Quota 1/4 trasporto e magazzino",120]]],
+["Installazione infissi",[["13","Posa portoncino, finestre e portafinestra",750]]],
+["Tapparelle motorizzate",[["14","Rullo e motore, 4 tapparelle",800]]],
+["Cassonetti",[["15","4 cassonetti per avvolgibili",1120]]],
+["Pavimenti e rivestimenti",[["16a","Fornitura piastrelle, 100 mq",2000],["16b","Preparazione fondi e posa, 100 mq",2800]]],
+["Impianto idraulico",[["17","Bagno e cucina, allacci, sanitari, caldaia, termosifoni",6000]]],
+["Impianto elettrico",[["18","Impianto completo, quadro e antenna TV comune",3000]]],
+["Rasatura esterna",[["19","Rasatura superfici esterne, 65 mq",1430]]],
+["Smaltimenti",[["20","Smaltimenti",450]]]
+];
+var BASE=34542;
+var TRANCHES=[{p:.20,n:"Alla firma del contratto"},{p:.30,n:"Inizio lavori e ordini materiali"},{p:.40,n:"SAL entro fine lavori"},{p:.10,n:"30 gg dalla fine lavori"}];
+var HEAD='\n<meta charset="utf-8">\n<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">\n<title>Pagamenti lavori – Trilocale Unità C</title>\n<link rel="preconnect" href="https://fonts.googleapis.com">\n<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>\n<link href="https://fonts.googleapis.com/css2?family=Barlow+Semi+Condensed:wght@500;600;700&family=Public+Sans:wght@400;500;600&display=swap" rel="stylesheet">\n';
+var state;
+try{state=JSON.parse(localStorage.getItem("trilocaleC")||"null")||JSON.parse(document.getElementById("state").textContent)}catch(e){state={}}
+state.iva=typeof state.iva==="number"?state.iva:10;state.payments=state.payments||[];state.extras=state.extras||[];
+var local=false,busy=false,artifactNs=null,openSecs={},pendingVoce="";
+try{openSecs=JSON.parse(sessionStorage.getItem("trilocaleOpen")||"{}");pendingVoce=sessionStorage.getItem("trilocaleVoce")||""}catch(e){}
+var fmt=new Intl.NumberFormat("it-IT",{style:"currency",currency:"EUR"});
+function eur(n){return fmt.format(Math.round(n*100)/100)}
+function esc(s){return String(s==null?"":s).replace(/[&<>"']/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]})}
+function today(){var d=new Date();return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")}
+function itDate(s){if(!s)return"";var p=s.split("-");return p[2]+"/"+p[1]+"/"+p[0]}
+function r2(n){return Math.round(n*100)/100}
+
+function sections(){
+  var s=VOCI.map(function(g){return{name:g[0],voci:g[1].map(function(v){return{id:v[0],desc:v[1],net:v[2]}})}});
+  if(state.extras.length)s.push({name:"Opere extra",extra:true,voci:state.extras.map(function(x){return{id:"x"+x.id,desc:x.desc,net:+x.amount,xid:x.id}})});
+  return s;
+}
+function chip(due,paid){
+  if(paid>due+0.5)return '<span class="st over">'+eur(paid-due)+' in più</span>';
+  if(paid>=due-0.5)return '<span class="st ok">Saldata</span>';
+  if(paid>0)return '<span class="st part">Acconto</span>';
+  return '<span class="st no">Da pagare</span>';
+}
+
+function render(){
+  var k=1+state.iva/100;
+  var secs=sections();
+  var byVoce={};state.payments.forEach(function(p){var v=p.voce||"gen";(byVoce[v]=byVoce[v]||[]).push(p)});
+  var extrasNet=state.extras.reduce(function(t,x){return t+(+x.amount||0)},0);
+  var total=(BASE+extrasNet)*k;
+  var paid=state.payments.reduce(function(t,p){return t+(+p.amount||0)},0);
+  var left=total-paid;
+  var pct=total>0?Math.min(100,paid/total*100):0;
+  var dueMap={};
+
+  var secHtml=secs.map(function(s,si){
+    var sDue=0,sPaid=0;
+    var vh=s.voci.map(function(v){
+      var due=v.net*k;dueMap[v.id]=due;
+      var ps=(byVoce[v.id]||[]).slice().sort(function(a,b){return a.date<b.date?-1:1});
+      var vp=ps.reduce(function(t,p){return t+(+p.amount)},0);
+      sDue+=due;sPaid+=vp;
+      var list=ps.length?'<ul class="pl">'+ps.map(function(p){return '<li><span>'+itDate(p.date)+' '+esc(p.tipo||"Acconto")+(p.ref?' ('+esc(p.ref)+')':'')+'</span><span>'+eur(+p.amount)+' <button class="del" data-del="p:'+p.id+'" aria-label="Elimina pagamento">×</button></span></li>'}).join("")+'</ul>':'';
+      return '<div class="voce"><div class="vh"><span>'+esc(v.id.charAt(0)==="x"?"":v.id+". ")+esc(v.desc)+'</span>'+chip(due,vp)+'</div>'+
+        '<div class="vm">Totale '+eur(due)+(vp?' – pagato '+eur(vp)+' – manca '+eur(Math.max(0,due-vp)):'')+'</div>'+list+
+        (vp<due-0.5?'<button class="quick" data-pay="'+v.id+'">Registra pagamento</button>':'')+
+        (s.extra?' <button class="del" data-del="e:'+v.xid+'">Elimina extra</button>':'')+'</div>';
+    }).join("");
+    var sp=sDue>0?Math.min(100,sPaid/sDue*100):0;
+    return '<details class="sec" data-sec="'+si+'"'+(openSecs[si]?' open':'')+'><summary><span class="t">'+esc(s.name)+'</span><span class="secTot num">'+eur(sDue)+'</span>'+
+      '<span class="m">'+chip(sDue,sPaid)+' '+(sPaid?'Versato '+eur(sPaid)+' ('+Math.round(sPaid/sDue*100)+'%)'+(sPaid<sDue-0.5?' – mancano '+eur(sDue-sPaid):''):'Nessun versamento')+'</span><span class="bar"><i style="width:'+sp+'%"></i></span></summary>'+vh+'</details>';
+  }).join("");
+
+  var gen=byVoce.gen||[];
+  var genHtml=gen.length?'<h2>Pagamenti non assegnati a una voce</h2><div class="sec"><div class="voce"><ul class="pl">'+gen.map(function(p){return '<li><span>'+itDate(p.date)+' '+esc(p.tipo||"Acconto")+(p.note?' – '+esc(p.note):'')+'</span><span>'+eur(+p.amount)+' <button class="del" data-del="p:'+p.id+'" aria-label="Elimina pagamento">×</button></span></li>'}).join("")+'</ul></div></div>':'';
+
+  var cum=0,ticks="",rows="",paidLeft=paid;
+  TRANCHES.forEach(function(t,i){
+    var amt=BASE*t.p*k;if(i===TRANCHES.length-1)amt+=extrasNet*k;cum+=amt;
+    var pos=cum/total*100;
+    if(i<TRANCHES.length-1)ticks+='<div class="tick" style="left:'+pos+'%"><span>'+Math.round(pos)+'%</span></div>';
+    var cov=Math.max(0,Math.min(amt,paidLeft));paidLeft-=cov;
+    var st=cov>=amt-0.5?'<span class="st ok">Coperta</span>':cov>0?'<span class="st part">'+eur(amt-cov)+' da dare</span>':'<span class="st no">Da pagare</span>';
+    rows+='<tr><td>'+(i+1)+'. '+t.n+'</td><td class="r">'+eur(amt)+'</td><td class="r">'+st+'</td></tr>';
+  });
+
+  var opts='<option value="gen">Non assegnato (acconto generico)</option>'+secs.map(function(s){return '<optgroup label="'+esc(s.name)+'">'+s.voci.map(function(v){return '<option value="'+v.id+'"'+(pendingVoce===v.id?' selected':'')+'>'+esc((v.id.charAt(0)==="x"?"":v.id+". ")+v.desc)+'</option>'}).join("")+'</optgroup>'}).join("");
+  var ivaBtns=[0,10,22].map(function(v){return '<button type="button" data-iva="'+v+'" aria-pressed="'+(state.iva===v)+'">'+v+'%</button>'}).join("");
+
+  document.getElementById("root").innerHTML=
+  '<section class="hero"><h1>Bardhollari Valerio – Prev. 12-13/2026 – Trilocale Unità C</h1>'+
+  '<div class="big num">'+eur(Math.max(0,left))+'</div>'+
+  '<div class="sub">'+(left<-0.5?'Hai pagato '+eur(-left)+' più del totale':'ancora da pagare su '+eur(total)+(state.iva?' IVA inclusa':' (IVA esclusa)'))+'</div>'+
+  '<div class="tape" role="img" aria-label="Pagato il '+Math.round(pct)+' percento"><div class="fill" style="width:'+pct+'%"></div>'+ticks+'</div>'+
+  '<div class="stats"><div><small>Pagato</small><b>'+eur(paid)+'</b></div><div><small>Imponibile'+(extrasNet?' + extra':'')+'</small><b>'+eur(BASE+extrasNet)+'</b></div><div><small>IVA '+state.iva+'%</small><b>'+eur((BASE+extrasNet)*state.iva/100)+'</b></div></div>'+
+  '<div class="ivarow">Aliquota IVA <div class="seg">'+ivaBtns+'</div></div>'+
+  '<div class="sync" id="sync">'+syncText()+'</div>'+
+  '</section>'+
+  '<h2 id="regTitle">Registra un pagamento</h2>'+
+  '<form id="fp"><label class="full">Voce del preventivo<select name="voce">'+opts+'</select></label>'+
+  '<p class="resinfo" id="resinfo"></p>'+
+  '<label>Data<input type="date" name="date" value="'+today()+'" required></label>'+
+  '<label>Importo pagato (€)<input type="number" name="amount" step="0.01" min="0.01" inputmode="decimal" required></label>'+
+  '<label>Tipo<select name="tipo"><option>Acconto</option><option>Saldo</option></select></label>'+
+  '<label>Metodo<select name="pm"><option>Bonifico</option><option>Bonifico parlante (bonus)</option><option>Assegno</option><option>Contanti</option><option>Altro</option></select></label>'+
+  '<label>Fattura / riferimento<input name="ref" placeholder="es. Fatt. 3/2026"></label>'+
+  '<label>Nota<input name="note" placeholder="facoltativa"></label>'+
+  '<p class="hint" id="cashHint" hidden>Con i contanti non resta traccia e si perde ogni detrazione: fatti almeno rilasciare una ricevuta firmata.</p>'+
+  '<button class="btn" type="submit">Salva pagamento</button></form>'+
+  '<h2>Situazione per voce</h2>'+secHtml+genHtml+
+  '<h2>Rate previste dal contratto</h2><div class="wrap"><table><thead><tr><th>Rata</th><th class="r">Importo</th><th class="r">Stato</th></tr></thead><tbody>'+rows+'</tbody></table></div>'+
+  '<p class="note">Confronto tra il totale pagato (tutte le voci) e le percentuali del contratto.</p>'+
+  '<h2>Aggiungi opera extra</h2>'+
+  '<form id="fe"><label class="full">Descrizione<input name="desc" required placeholder="es. Presa aggiuntiva cucina"></label>'+
+  '<label class="full">Importo imponibile (€)<input type="number" name="amount" step="0.01" min="0.01" inputmode="decimal" required></label>'+
+  '<p class="note full" style="margin:0">Aggiungi solo extra concordati per iscritto con l\'impresa: compariranno come voci pagabili.</p>'+
+  '<button class="btn" type="submit">Aggiungi opera extra</button></form>'+
+  '<h2>Backup</h2><p class="note">Copia di sicurezza facoltativa: con la sincronizzazione attiva i dati sono già nel cloud.</p>'+
+  '<div class="bk"><button type="button" class="quick" id="exp">Esporta backup</button><button type="button" class="quick" id="imp">Ripristina backup</button><input type="file" id="impFile" accept="application/json,.json" hidden></div>'+
+  (session?'<p class="note" style="margin-top:24px">Collegato come '+esc(session.user.email)+' <button type="button" class="del" id="logout">Esci</button></p>':'');
+
+  var fp=document.getElementById("fp"),fe=document.getElementById("fe");
+  function q(f,n){return f.querySelector('[name="'+n+'"]')}
+  function voceInfo(){
+    var id=q(fp,"voce").value,box=document.getElementById("resinfo");
+    if(id==="gen"){box.innerHTML="";return}
+    var due=dueMap[id]||0,vp=(byVoce[id]||[]).reduce(function(t,p){return t+(+p.amount)},0),res=r2(Math.max(0,due-vp));
+    box.innerHTML='<span>Totale voce '+eur(due)+' – già pagato '+eur(vp)+' – residuo '+eur(res)+'</span>'+(res>0?'<button type="button" class="quick" id="fillSaldo">Salda tutto ('+eur(res)+')</button>':'');
+    var b=document.getElementById("fillSaldo");if(b)b.addEventListener("click",function(){q(fp,"amount").value=res.toFixed(2);q(fp,"tipo").value="Saldo"});
+  }
+  q(fp,"voce").addEventListener("change",voceInfo);voceInfo();
+  q(fp,"pm").addEventListener("change",function(){document.getElementById("cashHint").hidden=q(fp,"pm").value!=="Contanti"});
+  fp.addEventListener("submit",function(e){e.preventDefault();var a=parseFloat(q(fp,"amount").value);if(!(a>0))return;
+    state.payments.push({id:Date.now().toString(36),voce:q(fp,"voce").value,date:q(fp,"date").value,amount:r2(a),tipo:q(fp,"tipo").value,method:q(fp,"pm").value,ref:q(fp,"ref").value.trim(),note:q(fp,"note").value.trim()});
+    pendingVoce="";save()});
+  fe.addEventListener("submit",function(e){e.preventDefault();var a=parseFloat(q(fe,"amount").value);if(!(a>0))return;
+    state.extras.push({id:Date.now().toString(36),desc:q(fe,"desc").value.trim(),amount:r2(a)});save()});
+  document.querySelectorAll("[data-iva]").forEach(function(b){b.addEventListener("click",function(){var v=+b.dataset.iva;if(v===state.iva)return;state.iva=v;save()})});
+  document.querySelectorAll("[data-pay]").forEach(function(b){b.addEventListener("click",function(){q(fp,"voce").value=b.dataset.pay;voceInfo();document.getElementById("regTitle").scrollIntoView({behavior:"smooth"});q(fp,"amount").focus({preventScroll:true})})});
+  document.querySelectorAll(".sec[data-sec]").forEach(function(d){d.addEventListener("toggle",function(){openSecs[d.dataset.sec]=d.open})});
+  document.querySelectorAll("[data-del]").forEach(function(b){b.addEventListener("click",function(e){e.preventDefault();
+    var p=b.dataset.del.split(":");if(!confirm(p[0]==="e"?"Eliminare questa opera extra? I pagamenti collegati diventeranno non assegnati.":"Eliminare questo pagamento?"))return;
+    if(p[0]==="p")state.payments=state.payments.filter(function(x){return x.id!==p[1]});
+    else{state.extras=state.extras.filter(function(x){return x.id!==p[1]});state.payments.forEach(function(x){if(x.voce==="x"+p[1])x.voce="gen"})}
+    save()})});
+  if(busy)document.querySelectorAll(".btn").forEach(function(b){b.disabled=true});
+}
+
+function buildPage(){
+  var json=JSON.stringify(state).replace(/</g,"\\u003c");
+  return "<!doctype html>\n<html lang=\"it\">\n<head>"+HEAD+'<style id="css">'+document.getElementById("css").textContent+"</style>\n</head>\n<body>\n<main id=\"root\"></main>\n"+
+    '<script type="application/json" id="state">'+json+"<\/script>\n"+
+    '<script id="app">'+document.getElementById("app").textContent+"<\/script>\n</body>\n</html>\n";
+}
+function normalize(o){o=o||{};o.iva=typeof o.iva==="number"?o.iva:0;o.payments=o.payments||[];o.extras=o.extras||[];return o}
+var sb=null,session=null,syncState="local",dirty=false;
+try{dirty=localStorage.getItem("trilocaleDirty")==="1"}catch(e){}
+function cloudOn(){return SUPABASE_URL.indexOf("https://")===0&&!!window.supabase}
+function syncText(){
+  return {local:"Dati salvati solo su questo telefono",sync:"Sincronizzazione in corso…",ok:"✓ Sincronizzato nel cloud",off:"Offline: le modifiche verranno inviate appena torna la rete",err:"Sincronizzazione non riuscita: riprovo alla prossima modifica"}[syncState];
+}
+function setSync(st){syncState=st;var el=document.getElementById("sync");if(el){el.textContent=syncText();el.dataset.s=st}}
+function setDirty(v){dirty=v;try{localStorage.setItem("trilocaleDirty",v?"1":"0")}catch(e){}}
+function storeLocal(){try{localStorage.setItem("trilocaleC",JSON.stringify(state))}catch(e){alert("Impossibile salvare sul telefono: spazio pieno o navigazione privata.")}}
+function save(){
+  try{sessionStorage.setItem("trilocaleOpen",JSON.stringify(openSecs))}catch(e){}
+  storeLocal();
+  if(sb&&session){setDirty(true);render();push()}else render();
+}
+var pushing=null;
+function push(){
+  if(!sb||!session)return Promise.resolve();
+  if(pushing)return pushing.then(function(){if(dirty)return push()});
+  setSync("sync");
+  pushing=sb.from("lavori_tracker").upsert({user_id:session.user.id,data:state,updated_at:new Date().toISOString()}).then(function(r){
+    pushing=null;
+    if(r.error){setSync(navigator.onLine?"err":"off")}else{setDirty(false);setSync("ok")}
+  },function(){pushing=null;setSync(navigator.onLine?"err":"off")});
+  return pushing;
+}
+function pull(){
+  if(!sb||!session)return;
+  if(dirty){push();return}
+  setSync("sync");
+  sb.from("lavori_tracker").select("data").eq("user_id",session.user.id).maybeSingle().then(function(r){
+    if(r.error){setSync(navigator.onLine?"err":"off");return}
+    if(r.data&&r.data.data){state=normalize(r.data.data);storeLocal();setSync("ok");render()}
+    else{setDirty(true);push()}
+  },function(){setSync("off")});
+}
+function renderLogin(msg){
+  document.getElementById("root").innerHTML='<section class="hero"><h1>Pagamenti lavori – Trilocale Unità C</h1><h2>Accedi per sincronizzare</h2></section>'+
+  '<form id="fl"><label class="full">Email<input type="email" name="email" autocomplete="username" required></label>'+
+  '<label class="full">Password<input type="password" name="pw" autocomplete="current-password" required></label>'+
+  (msg?'<p class="hint">'+esc(msg)+'</p>':'')+
+  '<button class="btn" type="submit">Accedi</button></form>';
+  var fl=document.getElementById("fl");
+  fl.addEventListener("submit",function(e){e.preventDefault();var b=fl.querySelector(".btn");b.disabled=true;
+    sb.auth.signInWithPassword({email:fl.querySelector('[name=email]').value.trim(),password:fl.querySelector('[name=pw]').value}).then(function(r){
+      if(r.error){renderLogin(navigator.onLine?"Email o password non corrette.":"Serve la connessione per il primo accesso.");return}
+      session=r.data.session;render();pull();
+    })});
+}
+function startCloud(){
+  if(!cloudOn()){setSync("local");return}
+  sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY,{auth:{persistSession:true,autoRefreshToken:true}});
+  sb.auth.getSession().then(function(r){
+    session=r.data&&r.data.session;
+    if(!session){renderLogin();return}
+    render();pull();
+  });
+  sb.auth.onAuthStateChange(function(ev,s){if(s)session=s});
+  window.addEventListener("online",function(){if(dirty)push();else pull()});
+  window.addEventListener("offline",function(){setSync("off")});
+  document.addEventListener("visibilitychange",function(){if(document.visibilityState==="visible")pull()});
+}
+state=normalize(state);
+render();
+startCloud();
+if(navigator.storage&&navigator.storage.persist)navigator.storage.persist();
+if("serviceWorker" in navigator)navigator.serviceWorker.register("sw.js").catch(function(){});
+document.addEventListener("click",function(e){
+  if(e.target.id==="exp"){
+    var blob=new Blob([JSON.stringify(state,null,2)],{type:"application/json"});
+    var f=new File([blob],"backup-pagamenti-"+today()+".json",{type:"application/json"});
+    if(navigator.canShare&&navigator.canShare({files:[f]})){navigator.share({files:[f],title:"Backup pagamenti lavori"}).catch(function(){})}
+    else{var u=URL.createObjectURL(blob),a=document.createElement("a");a.href=u;a.download=f.name;document.body.appendChild(a);a.click();a.remove();setTimeout(function(){URL.revokeObjectURL(u)},1000)}
+  }
+  if(e.target.id==="imp")document.getElementById("impFile").click();
+  if(e.target.id==="logout"&&sb){if(dirty&&!confirm("Ci sono modifiche non ancora sincronizzate. Uscire comunque?"))return;sb.auth.signOut().then(function(){session=null;renderLogin()})}
+});
+document.addEventListener("change",function(e){
+  if(e.target.id!=="impFile"||!e.target.files[0])return;
+  var r=new FileReader();r.onload=function(){try{var o=JSON.parse(r.result);if(!o||!Array.isArray(o.payments))throw 0;
+    if(!confirm("Sostituire i dati attuali con quelli del backup ("+o.payments.length+" pagamenti)?"))return;
+    state=o;state.extras=state.extras||[];save();alert("Backup ripristinato.")}catch(x){alert("File non valido: scegli un backup esportato da questa app.")}};
+  r.readAsText(e.target.files[0]);e.target.value="";
+});
+})();
+</script>
+</body>
+</html>
