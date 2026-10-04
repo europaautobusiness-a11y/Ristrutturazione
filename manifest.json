@@ -1,6 +1,6 @@
 {
-  "name": "Pagamenti lavori – Trilocale C",
-  "short_name": "Lavori C",
+  "name": "Pagamenti lavori",
+  "short_name": "Lavori",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
